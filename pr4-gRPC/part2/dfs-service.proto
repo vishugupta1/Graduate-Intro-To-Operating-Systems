@@ -1,0 +1,116 @@
+syntax = "proto3";
+
+package dfs_service;
+
+service DFSService {
+
+    // Add your service calls here
+
+    // 1. REQUIRED (Parts 1 & 2): A method to store files on the server
+
+    rpc storeFile(stream storeFileInput) returns (storeFileOutput);
+
+    // 2. REQUIRED (Parts 1 & 2): A method to fetch files from the server
+
+    rpc fetchFile(fetchFileInput) returns (stream fetchFileOutput);
+
+    // 3. REQUIRED (Parts 1 & 2): A method to list all files on the server
+
+    rpc listFiles(listFilesInput) returns (stream listFilesOutput);
+
+    // 4. REQUIRED (Parts 1 & 2): A method to get the status of a file on the server
+
+    rpc statusFile(statusFileInput) returns (statusFileOutput);
+
+    // 5. REQUIRED (Part 2 only): A method to request a write lock from the server
+
+    rpc requestLock(requestLockInput) returns (requestLockOutput);
+
+    // 6. REQUIRED (Part 2 only): A method named CallbackList to handle asynchronous file listing requests
+    //                            from a client. This method should return a listing of files along with their
+    //                            attribute information. The expected attribute information should include name,
+    //                            size, modified time, and creation time.
+
+    rpc CallbackList(CallbackListInput) returns (CallbackListOutput);
+    // 7. REQUIRED (Part 2 only): A method to delete a file from the server
+
+    rpc deleteFile(deleteFileInput) returns (deleteFileOutput);
+    // 8. Any other methods you deem necessary to complete the tasks of this assignment
+
+
+}
+
+// Add your message types here
+
+message storeFileInput{
+    string fileName = 1;
+    string clientID = 2;
+    int32 contentSize = 3;
+    bytes content = 4;
+    uint32 crc = 5;
+}
+
+message storeFileOutput{}
+
+message fetchFileInput{
+    string fileName = 1;
+    string clientID = 2;
+   //int32 mtime = 3;
+    uint32 crc = 3;
+}
+
+message fetchFileOutput{
+    int32 contentSize = 1;
+    bytes content = 2;
+    uint32 crc = 3;
+}
+
+message listFilesInput{}
+
+message listFilesOutput{
+    string fileName = 1;
+    int32 mtime = 2;
+    //map<string, int32> list = 1;
+}
+
+message statusFileInput{
+    string filename = 1;
+    int32 clientID = 2;
+}
+
+message statusFileOutput{
+    string filename = 1;
+    int32 fileLength = 2;
+    int32 crc = 3;
+    int32 mtime = 4;
+    int32 ctime = 5;
+}
+
+message requestLockInput{
+    string clientID = 1;
+    string fileName = 2;
+}
+
+message requestLockOutput{}
+
+message CallbackListInput{
+    string name = 1;
+}
+
+message CallbackListOutput{
+    //string fileName = 1;
+    //int32 fileLength = 2;
+    //int32 mtime = 4;
+    //int32 ctime = 5;
+    map<string, int32> mtime = 1;
+    map<string, uint32> crc = 2;
+}
+
+message deleteFileInput{
+    string fileName = 1;
+    string clientID = 2;
+}
+
+message deleteFileOutput{}
+
+
